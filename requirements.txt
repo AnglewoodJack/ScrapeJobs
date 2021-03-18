@@ -1,0 +1,4 @@
+webdriver_manager==3.3.0
+selenium==3.141.0
+tqdm==4.56.0
+beautifulsoup4==4.9.3
