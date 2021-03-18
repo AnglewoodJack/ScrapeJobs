@@ -1,9 +1,19 @@
+import random
+import re
+from time import sleep
+from urllib.parse import urljoin
+
+from bs4 import BeautifulSoup
+from selenium.webdriver.support.wait import WebDriverWait
+from tqdm import tqdm
+
+
 class IaeaJobScraper(object):
 	"""
 	IAEA jobs scraper.
 	"""
 
-	def __init__(self, driver: object, link: str, timeout: float):
+	def __init__(self, driver, link: str, timeout: float):
 		"""
 		:param driver: preconfigured webdriver (result of "configure_driver" function)
 		:param link: linc to scraping webpage - iaea.taleo.net
@@ -34,7 +44,7 @@ class IaeaJobScraper(object):
 		# execute f
 		match_res = f(self.driver)
 		# match_object.group(0) says that the whole part of match_object is chosen.
-		page_res = match_res.group(0) # get string
+		page_res = match_res.group(0)  # get string
 		# create empty jobs list
 		jobs = []
 		# initialize page number
@@ -68,7 +78,7 @@ class IaeaJobScraper(object):
 				# append job's dictionary to overall jobs list
 				jobs.append(job)
 				# sleep random time after each job
-				sleep(random.uniform(0.5,1.0))
+				sleep(random.uniform(0.5, 1.0))
 
 			# find next page button
 			next_page_elem = self.driver.find_element_by_id('next')
@@ -106,6 +116,6 @@ class IaeaJobScraper(object):
 			# save html code of a job's page
 			job['html_page'] = s.prettify(formatter='html')
 			# sleep random time after each job
-			sleep(random.uniform(0.75,1.0))
+			sleep(random.uniform(0.75, 1.0))
 		# close driver after getting all the jobs info
 		self.driver.quit()

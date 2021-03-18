@@ -1,3 +1,12 @@
+import random
+import re
+from time import sleep
+
+from bs4 import BeautifulSoup
+from selenium.webdriver.support.wait import WebDriverWait
+from tqdm import tqdm
+
+
 class IterJobScraper(object):
 	"""
 
@@ -48,7 +57,7 @@ class IterJobScraper(object):
 			# append job's dictionary to overall jobs list
 			jobs.append(job)
 			# sleep random time after each job
-			sleep(random.uniform(0.5,1.0))
+			sleep(random.uniform(0.5, 1.0))
 
 		return jobs
 
@@ -65,7 +74,7 @@ class IterJobScraper(object):
 			# save html code of a job's page
 			job['html_page'] = s.prettify(formatter="html")
 			# sleep random time after each job
-			sleep(random.uniform(0.75,1.0))
+			sleep(random.uniform(0.75, 1.0))
 
 	def scrape(self, get_html=True, quit_driver=True):
 		"""

@@ -1,3 +1,13 @@
+import random
+import re
+from time import sleep
+
+from bs4 import BeautifulSoup
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
+from tqdm import tqdm
+
+
 class OecdJobScraper(object):
 
 	def __init__(self, driver, link):
@@ -9,7 +19,6 @@ class OecdJobScraper(object):
 		self.wait = WebDriverWait(self.driver, 10)
 		# jobs page link
 		self.link = link
-
 
 	def scrape_job_links(self):
 		"""
@@ -28,20 +37,18 @@ class OecdJobScraper(object):
 		# get total number of pages
 		total_pages = int(m[0])
 		# get the number of jobs per page
-		select = Select(driver.find_element_by_name('dropListSize'))
+		select = Select(self.driver.find_element_by_name('dropListSize'))
 		per_page = int(select.first_selected_option.text)
 		# get total number of jobs
-		total_jobs = int(re.findall(r'\d+', driver.find_element_by_id('requisitionListInterface.ID745').text)[0])
+		total_jobs = int(re.findall(r'\d+', self.driver.find_element_by_id('requisitionListInterface.ID745').text)[0])
 		# create empty jobs list
 		jobs = []
 		# set initial page number
 		pageno = 1
 
 		while pageno <= total_pages:
-			# count jobs at page
-			job_count = 1
 			# go to corresponding page
-			driver.find_element_by_id(f'requisitionListInterface.pagerDivID1649.P{pageno}').click()
+			self.driver.find_element_by_id(f'requisitionListInterface.pagerDivID1649.P{pageno}').click()
 			# wait for the page to be loaded
 			sleep(3)
 			# check the number of jobs on a page
@@ -56,31 +63,29 @@ class OecdJobScraper(object):
 				# job's info dictionary initialization
 				job = {}
 				# add job title
-				_title = driver.find_element_by_id(f'requisitionListInterface.reqTitleLinkAction.row{i}')
+				_title = self.driver.find_element_by_id(f'requisitionListInterface.reqTitleLinkAction.row{i}')
 				job['title'] = _title.text
 				# add OECD organization
-				_oecd_unit = driver.find_element_by_id(f'requisitionListInterface.reqOrganization.row{i}')
+				_oecd_unit = self.driver.find_element_by_id(f'requisitionListInterface.reqOrganization.row{i}')
 				job['oecd_unit'] = _oecd_unit.text
 				# add job location
-				_location = driver.find_element_by_id(f'requisitionListInterface.reqBasicLocation.row{i}')
+				_location = self.driver.find_element_by_id(f'requisitionListInterface.reqBasicLocation.row{i}')
 				job['location'] = _location.text
 				# add job posting date
-				_posted = driver.find_element_by_id(f'requisitionListInterface.reqPostingDate.row{i}')
+				_posted = self.driver.find_element_by_id(f'requisitionListInterface.reqPostingDate.row{i}')
 				job['posted'] = _posted.text
 				# add job id
-				_id = driver.find_element_by_id(f'requisitionListInterface.reqContestNumberValue.row{i}')
+				_id = self.driver.find_element_by_id(f'requisitionListInterface.reqContestNumberValue.row{i}')
 				job['id'] = _id.text
 				# add job deadline
-				_deadline = driver.find_element_by_id(f'requisitionListInterface.reqUnpostingDate.row{i}')
+				_deadline = self.driver.find_element_by_id(f'requisitionListInterface.reqUnpostingDate.row{i}')
 				job['deadline'] = _deadline.text
 				# add job position on the page
 				job['page/row'] = (pageno, i)
-				# update job counter
-				job_count += 1
 				# append job's dictionary to overall jobs list
 				jobs.append(job)
 				# sleep random time after each job
-				sleep(random.uniform(0.5,1.0))
+				sleep(random.uniform(0.5, 1.0))
 			# update page number
 			pageno += 1
 
@@ -107,7 +112,7 @@ class OecdJobScraper(object):
 			# save html code of a job's page
 			job['html_page'] = s.prettify(formatter='html')
 			# sleep random time after each job
-			sleep(random.uniform(0.75,1.0))
+			sleep(random.uniform(0.75, 1.0))
 
 	def scrape(self, get_html=True, quit_driver=True):
 		"""
