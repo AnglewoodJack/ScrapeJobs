@@ -10,13 +10,14 @@ from tqdm import tqdm
 
 class IaeaJobScraper(object):
 	"""
-	IAEA jobs scraper.
+	IAEA job scraper.
 	"""
 
 	def __init__(self, driver, link: str, timeout: float):
 		"""
 		:param driver: preconfigured webdriver (result of "configure_driver" function)
-		:param link: linc to scraping webpage - iaea.taleo.net
+		:param link: IAEA job page url to scrape
+		:param timeout: webdriver wait time for page loading
 		"""
 		# browser driver
 		self.driver = driver
@@ -52,7 +53,7 @@ class IaeaJobScraper(object):
 		# loop through pages and jobs
 		while True:
 			# get page source code
-			s = BeautifulSoup(self.driver.page_source)
+			s = BeautifulSoup(self.driver.page_source, features="html.parser")
 			# regex to find job's link
 			job_reg = re.compile(r'jobdetail\.ftl\?job=\d+')
 			# regex to find job's id
@@ -104,7 +105,7 @@ class IaeaJobScraper(object):
 
 	def scrape_full(self):
 		"""
-		Update jobs attribute wuth full info for currently open vacancies.
+		Update jobs attribute with full info for currently open vacancies.
 		The full info is not parsed and and placed into jobs dictionary as html code.
 		"""
 		# for each job in jobs list
