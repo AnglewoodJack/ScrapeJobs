@@ -8,7 +8,9 @@ from selenium.webdriver.chrome.options import Options
 
 def configure_driver(path: str = None):
 	"""
-
+	Sets chromedriver parameters.
+	:params path: path to chromedriver executable.
+	:return: configured driver object.
 	"""
 	# add additional options to webdriver
 	chrome_options = Options()

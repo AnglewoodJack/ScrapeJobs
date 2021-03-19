@@ -9,28 +9,35 @@ from tqdm import tqdm
 
 class IterJobScraper(object):
 	"""
-
+	ITER job scraper.
 	"""
 
-	def __init__(self, driver, link):
+	def __init__(self, driver, link: str, timeout: float):
+		"""
+		:param driver: preconfigured webdriver (result of "configure_driver" function)
+		:param link: ITER job page url to scrape
+		:param timeout: webdriver wait time for page loading
+		"""
 		# browser driver
 		self.driver = driver
 		# display resolution
 		self.driver.set_window_size(2560, 1600)
 		# timeout
-		self.wait = WebDriverWait(self.driver, 10)
+		self.wait = WebDriverWait(self.driver, timeout)
 		# jobs page link
 		self.link = link
+		# list of jobs info dictionaries
+		self.jobs = None
 
-	def scrape_job_links(self):
+	def scrape_brief(self):
 		"""
-
+		Get general info for currently open vacancies.
 		"""
 		# get page
 		self.driver.get(self.link)
 		# create empty jobs list
 		jobs = []
-		# get page soucce
+		# get page source
 		s = BeautifulSoup(self.driver.page_source)
 		# regex to get the job unique id from the job's link
 		reg = re.compile(r'id=(\d+)')
@@ -59,14 +66,16 @@ class IterJobScraper(object):
 			# sleep random time after each job
 			sleep(random.uniform(0.5, 1.0))
 
-		return jobs
+		# save jobs list to class attribute
+		self.jobs = jobs
 
-	def scrape_job_descriptions(self, jobs):
+	def scrape_full(self):
 		"""
-
+		Update jobs attribute with full info for currently open vacancies.
+		The full info is not parsed and and placed into jobs dictionary as html code.
 		"""
 		# for each job in jobs list
-		for job in tqdm(jobs, desc='Getting job descriptions'):
+		for job in tqdm(self.jobs, desc='Getting job descriptions'):
 			# go to job description page
 			self.driver.get(job['url'])
 			# get page source
@@ -76,18 +85,5 @@ class IterJobScraper(object):
 			# sleep random time after each job
 			sleep(random.uniform(0.75, 1.0))
 
-	def scrape(self, get_html=True, quit_driver=True):
-		"""
-
-		"""
-		# scrape brief info
-		jobs = self.scrape_job_links()
-		# scrape full info
-		if get_html:
-			self.scrape_job_descriptions(jobs)
-
-		# close driver session
-		if quit_driver:
-			self.driver.quit()
-
-		return jobs
+		# close driver after getting all the jobs info
+		self.driver.quit()
