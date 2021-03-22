@@ -1,10 +1,11 @@
 import random
 import re
-from time import sleep
 
+from time import sleep
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.wait import WebDriverWait
 from tqdm import tqdm
+from dateutil import parser
 
 
 class IterJobScraper(object):
@@ -60,7 +61,7 @@ class IterJobScraper(object):
 			job['title'] = job_title
 			job['url'] = job_link
 			# parse deadline form the first 'td' tag for current job
-			job['deadline'] = td[0].text
+			job['deadline'] = parser.parse(td[0].text)
 			# specify location manually
 			job['location'] = 'France-St. Paul-lez-Durance)'
 			# add organization name manually

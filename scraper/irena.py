@@ -1,11 +1,12 @@
 import random
 import re
-from time import sleep
 
+from time import sleep
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from tqdm import tqdm
+from dateutil import parser
 
 
 class IrenaJobScraper(object):
@@ -86,7 +87,7 @@ class IrenaJobScraper(object):
                 job['id'] = _id.text
                 # add job deadline
                 _deadline = self.driver.find_element_by_id(f'requisitionListInterface.reqUnpostingDate.row{i}')
-                job['deadline'] = _deadline.text
+                job['deadline'] = parser.parse(_deadline.text)
                 # add organization name manually
                 job['organization'] = 'IRENA'
                 # add job position on the page

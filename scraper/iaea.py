@@ -1,11 +1,12 @@
 import random
 import re
+
 from time import sleep
 from urllib.parse import urljoin
-
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.wait import WebDriverWait
 from tqdm import tqdm
+from dateutil import parser
 
 
 class IaeaJobScraper(object):
@@ -77,7 +78,7 @@ class IaeaJobScraper(object):
 				# parse location form the second 'td' tag for current job
 				job['location'] = td[1].text
 				# parse deadline form the third 'td' tag for current job
-				job['deadline'] = td[2].text
+				job['deadline'] = parser.parse(td[2].text)
 				# add organization name manually
 				job['organization'] = 'IAEA'
 				# append job's dictionary to overall jobs list

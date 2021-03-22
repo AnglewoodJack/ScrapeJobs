@@ -1,24 +1,25 @@
 import random
 import re
-from time import sleep
 
+from time import sleep
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from tqdm import tqdm
+from dateutil import parser
 
 
 class OecdJobScraper(object):
     """
-	OECD job scraper.
-	"""
+    OECD job scraper.
+    """
 
     def __init__(self, driver, link: str, timeout: float):
         """
-		:param driver: preconfigured webdriver (result of "configure_driver" function)
-		:param link: OECD job page url to scrape
-		:param timeout: webdriver wait time for page loading
-		"""
+        :param driver: preconfigured webdriver (result of "configure_driver" function)
+        :param link: OECD job page url to scrape
+        :param timeout: webdriver wait time for page loading
+        """
         # browser driver
         self.driver = driver
         # display resolution
@@ -32,8 +33,8 @@ class OecdJobScraper(object):
 
     def scrape_brief(self):
         """
-		Get general info for currently open vacancies.
-		"""
+        Get general info for currently open vacancies.
+        """
         # get page
         self.driver.get(self.link)
         # regex for number of jobs (example: Jobs - Page 1 out of 2)
@@ -89,7 +90,7 @@ class OecdJobScraper(object):
                 job['id'] = _id.text
                 # add job deadline
                 _deadline = self.driver.find_element_by_id(f'requisitionListInterface.reqUnpostingDate.row{i}')
-                job['deadline'] = _deadline.text
+                job['deadline'] = parser.parse(_deadline.text)
                 # add organization name manually
                 job['organization'] = 'OECD'
                 # add job position on the page
@@ -107,7 +108,7 @@ class OecdJobScraper(object):
         """
         Update jobs attribute with full info for currently open vacancies.
         The full info is not parsed and and placed into jobs dictionary as html code.
-		"""
+        """
         # for each job in jobs list
         for job in tqdm(self.jobs, desc='Getting job descriptions'):
             # go to job description page
