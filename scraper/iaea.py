@@ -76,6 +76,10 @@ class IaeaJobScraper(object):
 				job['url'] = job_link
 				# parse location form the second 'td' tag for current job
 				job['location'] = td[1].text
+				# parse deadline form the third 'td' tag for current job
+				job['deadline'] = td[2].text
+				# add organization name manually
+				job['organization'] = 'IAEA'
 				# append job's dictionary to overall jobs list
 				jobs.append(job)
 				# sleep random time after each job
@@ -113,7 +117,7 @@ class IaeaJobScraper(object):
 			# go to job description page
 			self.driver.get(job['url'])
 			# get page source
-			s = BeautifulSoup(self.driver.page_source)
+			s = BeautifulSoup(self.driver.page_source, features="html.parser")
 			# save html code of a job's page
 			job['html_page'] = s.prettify(formatter='html')
 			# sleep random time after each job

@@ -61,6 +61,10 @@ class IterJobScraper(object):
 			job['url'] = job_link
 			# parse deadline form the first 'td' tag for current job
 			job['deadline'] = td[0].text
+			# specify location manually
+			job['location'] = 'France-St. Paul-lez-Durance)'
+			# add organization name manually
+			job['organization'] = 'ITER'
 			# append job's dictionary to overall jobs list
 			jobs.append(job)
 			# sleep random time after each job

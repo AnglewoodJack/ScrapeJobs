@@ -87,6 +87,8 @@ class IrenaJobScraper(object):
                 # add job deadline
                 _deadline = self.driver.find_element_by_id(f'requisitionListInterface.reqUnpostingDate.row{i}')
                 job['deadline'] = _deadline.text
+                # add organization name manually
+                job['organization'] = 'IRENA'
                 # add job position on the page
                 job['page/row'] = (pageno, i)
                 # append job's dictionary to overall jobs list
