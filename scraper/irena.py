@@ -50,7 +50,7 @@ class IrenaJobScraper(object):
         select = Select(self.driver.find_element_by_name('dropListSize'))
         per_page = int(select.first_selected_option.text)
         # get total number of jobs
-        total_jobs = int(re.findall(r'\d+', self.driver.find_element_by_id('requisitionListInterface.ID745').text)[0])
+        total_jobs = int(re.findall(r'\d+', self.driver.find_element_by_class_name('subtitle').text)[0])
         # create empty jobs list
         jobs = []
         # set initial page number
@@ -58,7 +58,7 @@ class IrenaJobScraper(object):
 
         while pageno <= total_pages:
             # go to corresponding page
-            self.driver.find_element_by_id(f'requisitionListInterface.pagerDivID1647.P{pageno}').click()
+            self.driver.find_element_by_xpath(f'//*[@title="Go to page {pageno}"]').click()
             # wait for the page to be loaded
             sleep(3)
             # check the number of jobs on a page
@@ -110,7 +110,7 @@ class IrenaJobScraper(object):
             # go to job description page
             self.driver.get(self.link)
             # find jobs page
-            page_elem = self.driver.find_element_by_id(f'requisitionListInterface.pagerDivID1647.P{job["page/row"][0]}')
+            page_elem = self.driver.find_element_by_xpath(f'//*[@title="Go to page {job["page/row"][0]}"]')
             # go to page
             page_elem.click()
             # wait for the page to load

@@ -67,7 +67,7 @@ class OecdJobScraper(object):
                 total_jobs -= per_page
             else:
                 jobs_number = total_jobs
-			# TODO: replace all find_element_by_id
+
             # loop through jobs on the page
             for i in tqdm(range(1, jobs_number + 1), desc=f'Scraping page {pageno}'):
                 # job's info dictionary initialization
@@ -113,7 +113,7 @@ class OecdJobScraper(object):
             # go to job description page
             self.driver.get(self.link)
             # find jobs page
-            page_elem = self.driver.find_element_by_id(f'requisitionListInterface.pagerDivID1649.P{job["page/row"][0]}')
+            page_elem = self.driver.find_element_by_xpath(f'//*[@title="Go to page {job["page/row"][0]}"]')
             # go to page
             page_elem.click()
             # wait for the page to load

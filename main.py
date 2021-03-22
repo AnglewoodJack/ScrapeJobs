@@ -3,6 +3,7 @@ import os
 from db.raw_db import db_connect, create_table, add_vacancies
 from scraper.iaea import IaeaJobScraper
 from scraper.irena import IrenaJobScraper
+from scraper.iter import IterJobScraper
 from scraper.oecd import OecdJobScraper
 from web.config import configure_driver
 
@@ -22,7 +23,7 @@ ITER_URL = 'https://www.iter.org/jobs'
 # Create driver object.
 driver = configure_driver()
 # Create scraper object.
-scraper = OecdJobScraper(driver=driver, link=OECD_URL, timeout=3)
+scraper = IterJobScraper(driver=driver, link=ITER_URL, timeout=3)
 # Scrape jobs - brief info.
 scraper.scrape_brief()
 

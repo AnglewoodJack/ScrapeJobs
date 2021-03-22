@@ -38,7 +38,7 @@ class IterJobScraper(object):
 		# create empty jobs list
 		jobs = []
 		# get page source
-		s = BeautifulSoup(self.driver.page_source)
+		s = BeautifulSoup(self.driver.page_source, features="html.parser")
 		# regex to get the job unique id from the job's link
 		reg = re.compile(r'id=(\d+)')
 		# find all 'tr' tags within the jobs table
@@ -83,7 +83,7 @@ class IterJobScraper(object):
 			# go to job description page
 			self.driver.get(job['url'])
 			# get page source
-			s = BeautifulSoup(self.driver.page_source)
+			s = BeautifulSoup(self.driver.page_source, features="html.parser")
 			# save html code of a job's page
 			job['html_page'] = s.prettify(formatter="html")
 			# sleep random time after each job

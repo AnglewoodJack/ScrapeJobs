@@ -2,6 +2,7 @@ import os
 import sqlite3
 
 from tqdm import tqdm
+from time import sleep
 
 
 def db_connect(db_filename):
@@ -76,6 +77,7 @@ def add_vacancies(vacancies: list, conn):
                 job['html_page']
             )
         )
+        sleep(0.3)
     # Apply insertion.
     conn.commit()
     print("Insertion completed.")
@@ -84,4 +86,3 @@ def add_vacancies(vacancies: list, conn):
 def get_vacancies():
     # TODO: function to retrieve jobs info form db.
     pass
-
