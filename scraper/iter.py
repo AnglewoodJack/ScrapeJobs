@@ -43,7 +43,7 @@ class IterJobScraper(object):
 		# regex to get the job unique id from the job's link
 		reg = re.compile(r'id=(\d+)')
 		# find all 'tr' tags within the jobs table
-		for tr in tqdm(s.tbody.findAll('tr'), desc='Scraping jobs'):
+		for tr in tqdm(s.tbody.findAll('tr'), desc="Scraping ITER's jobs"):
 			# find 'b' tag
 			b = tr.findChildren('b')
 			# get 'a' tag inside 'b' tag (for job title and link)
@@ -79,12 +79,21 @@ class IterJobScraper(object):
 		Update jobs attribute with full info for currently open vacancies.
 		The full info is not parsed and and placed into jobs dictionary as html code.
 		"""
+		reopen_status = re.compile(r'This is a re-opening of the vacancy')  # might be redundant for ITER
 		# for each job in jobs list
-		for job in tqdm(self.jobs, desc='Getting job descriptions'):
+		for job in tqdm(self.jobs, desc="Getting ITER's jobs descriptions"):
 			# go to job description page
 			self.driver.get(job['url'])
 			# get page source
 			s = BeautifulSoup(self.driver.page_source, features="html.parser")
+
+			if re.search(reopen_status, s.text):
+				# true if found re-opening status
+				job['reopen'] = 1
+			else:
+				# false otherwise
+				job['reopen'] = 0
+
 			# save html code of a job's page
 			job['html_page'] = s.prettify(formatter="html")
 			# sleep random time after each job

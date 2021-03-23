@@ -60,7 +60,7 @@ class IaeaJobScraper(object):
 			# regex to find job's id
 			id_reg = re.compile(r'job=(\d+\/\d+\s\(\d+\))')
 			# find all 'a' tags with 'href' of specified above regex pattern
-			for a in tqdm(s.findAll('a', href=job_reg), desc=f'Scraping page {pageno}'):
+			for a in tqdm(s.findAll('a', href=job_reg), desc=f"Scraping IAEA's jobs page {pageno}"):
 				# for each 'a' tag find parent 'tr' and 'td' tags
 				tr = a.findParent('tr')
 				td = tr.findAll('td')
@@ -113,12 +113,22 @@ class IaeaJobScraper(object):
 		Update jobs attribute with full info for currently open vacancies.
 		The full info is not parsed and and placed into jobs dictionary as html code.
 		"""
+		# check if it is a re-opening of the vacancy
+		reopen_status = re.compile(r'This is a re-opening of the vacancy')
 		# for each job in jobs list
-		for job in tqdm(self.jobs, desc='Getting job descriptions'):
+		for job in tqdm(self.jobs, desc="Getting IAEA's job descriptions"):
 			# go to job description page
 			self.driver.get(job['url'])
 			# get page source
 			s = BeautifulSoup(self.driver.page_source, features="html.parser")
+
+			if re.search(reopen_status, s.text):
+				# true if found re-opening status
+				job['reopen'] = 1
+			else:
+				# false otherwise
+				job['reopen'] = 0
+
 			# save html code of a job's page
 			job['html_page'] = s.prettify(formatter='html')
 			# sleep random time after each job

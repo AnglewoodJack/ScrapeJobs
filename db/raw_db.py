@@ -39,14 +39,15 @@ def create_table(conn):
         location - job location;
         deadline - application deadline;
         organization - IAEA, ITER, IRENA or OECD;
-        html - source code of job's web page.
+        html - source code of job's web page;
+        reopen - 1 if vacancy is re-opened, 0 otherwise.
     :params conn: db connection object.
     """
     # Create cursor.
     cur = conn.cursor()
     # Create table.
     query = """CREATE TABLE IF NOT EXISTS vacancies (id INTEGER PRIMARY KEY, job_id TEXT, title TEXT, location TEXT,
-            deadline DATETIME, organization TEXT, html TEXT);
+            deadline DATETIME, organization TEXT, html TEXT, reopen INTEGER, UNIQUE(job_id, deadline));
             """
     cur.execute(query)
     conn.commit()
@@ -58,13 +59,15 @@ def add_vacancies(vacancies: list, conn):
     :param vacancies: list of dictionaries with jobs info.
     :param conn: db connection object.
     """
+    # Get jobs list organization name.
+    org = vacancies[0]['organization']
     # Create cursor.
     cur = conn.cursor()
     # Iterate over vacancies.
-    for job in tqdm(vacancies, desc="Inserting job's info"):
+    for job in tqdm(vacancies, desc=f"Inserting {org}'s jobs info"):
         insert_query = """
-        INSERT INTO vacancies (job_id, title, location, deadline, organization, html)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT OR IGNORE INTO vacancies (job_id, title, location, deadline, organization, html, reopen)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """
         cur.execute(
             insert_query,
@@ -74,7 +77,8 @@ def add_vacancies(vacancies: list, conn):
                 job['location'],
                 job['deadline'],
                 job['organization'],
-                job['html_page']
+                job['html_page'],
+                job['reopen']
             )
         )
         sleep(0.3)
@@ -83,6 +87,24 @@ def add_vacancies(vacancies: list, conn):
     print("Insertion completed.")
 
 
-def get_vacancies():
-    # TODO: function to retrieve jobs info form db.
-    pass
+def get_vacancies(conn, full=False):
+    """
+    Retrieves list of jobs from db.
+    :param conn: db connection object.
+    :param full: if True retrieves full information about vacancies,
+    otherwise gets "organization", "title" and "deadline".
+    :return: list with query results.
+    """
+    # Create cursor.
+    cur = conn.cursor()
+    # Query for the information to retrieve from db.
+    if full:
+        query = "SELECT job_id, title, location, deadline, organization, html, reopen FROM vacancies;"
+    else:
+        query = "SELECT organization, title, deadline FROM vacancies;"
+
+    # Execute query and get all results.
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    return rows

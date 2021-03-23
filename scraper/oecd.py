@@ -70,7 +70,7 @@ class OecdJobScraper(object):
                 jobs_number = total_jobs
 
             # loop through jobs on the page
-            for i in tqdm(range(1, jobs_number + 1), desc=f'Scraping page {pageno}'):
+            for i in tqdm(range(1, jobs_number + 1), desc=f"Scraping OECD's jobs page {pageno}"):
                 # job's info dictionary initialization
                 job = {}
                 # add job title
@@ -109,8 +109,10 @@ class OecdJobScraper(object):
         Update jobs attribute with full info for currently open vacancies.
         The full info is not parsed and and placed into jobs dictionary as html code.
         """
+        # check if it is a re-opening of the vacancy
+        reopen_status = re.compile(r'This is a re-opening of the vacancy')  # might be redundant for OECD
         # for each job in jobs list
-        for job in tqdm(self.jobs, desc='Getting job descriptions'):
+        for job in tqdm(self.jobs, desc="Getting OECD's jobs descriptions"):
             # go to job description page
             self.driver.get(self.link)
             # find jobs page
@@ -125,6 +127,14 @@ class OecdJobScraper(object):
             row.click()
             # get page source
             s = BeautifulSoup(self.driver.page_source, features="html.parser")
+
+            if re.search(reopen_status, s.text):
+                # true if found re-opening status
+                job['reopen'] = 1
+            else:
+                # false otherwise
+                job['reopen'] = 0
+
             # save html code of a job's page
             job['html_page'] = s.prettify(formatter='html')
             # sleep random time after each job
