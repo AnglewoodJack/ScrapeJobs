@@ -3,7 +3,7 @@ from core.scraper import IaeaScraper, IrenaScraper, IterScraper, OecdScraper
 from core.config import configure_driver
 
 # Path to chrome browser driver.
-CHROME_PATH = "/usr/local/bin/chromedriver"
+CHROME_PATH = "/usr/local/bin/chromedriver"  # MacOs default folder after chromedriver installation with brew
 # IAEA job page url.
 IAEA_URL = 'https://iaea.taleo.net/careersection/ex/jobsearch.ftl'
 # IRENA job page url.
@@ -29,7 +29,7 @@ def update_db(conn):
     """
     for scraper in scrapers:
         # Create driver object.
-        driver = configure_driver(CHROME_PATH)
+        driver = configure_driver()  # specify chromedriver path if needed
         # Assign driver to core instance.
         scraper.driver = driver
         # Scrape jobs - brief info.

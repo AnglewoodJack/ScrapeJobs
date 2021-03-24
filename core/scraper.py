@@ -235,7 +235,7 @@ class IrenaScraper(JobScraper):
 		The full info is not parsed and and placed into jobs dictionary as html code.
 		"""
 		# check if it is a re-opening of the vacancy
-		reopen_status = re.compile(r'This is a re-opening of the vacancy')  # might be redundant for IRENA
+		reopen_status = re.compile(r'This is a re-advertisement of the vacancy')
 		# for each job in jobs list
 		for job in tqdm(self.jobs, desc="Getting IRENA's job descriptions"):
 			# go to job description page
