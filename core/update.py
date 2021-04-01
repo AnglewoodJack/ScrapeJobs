@@ -1,6 +1,6 @@
 from db.raw_db import add_vacancies
 from core.scraper import IaeaScraper, IrenaScraper, IterScraper, OecdScraper
-from core.config import configure_driver
+from config.config import configure_driver
 
 # Path to chrome browser driver.
 CHROME_PATH = "/usr/local/bin/chromedriver"  # MacOs default folder after chromedriver installation with brew
