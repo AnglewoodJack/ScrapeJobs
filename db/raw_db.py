@@ -5,7 +5,7 @@ from tqdm import tqdm
 from time import sleep
 
 
-def db_connect(db_filename):
+def connect_lite(db_filename):
     """
     Connects to SQLite database file "db_filename".
     If does not exist, creates new database file.
@@ -17,6 +17,7 @@ def db_connect(db_filename):
 
     # Connect to db or create one if does not exist.
     try:
+        print('Connecting to the SQLite database...')
         conn = sqlite3.connect(
             os.path.join(
                 os.path.dirname(__file__), db_filename
@@ -27,10 +28,12 @@ def db_connect(db_filename):
     except sqlite3.Error as error:
         print(error)
 
+    print('Connected!')
+
     return conn
 
 
-def create_table(conn):
+def create_table_lite(conn):
     """
     Creates table if not exist.
         id - primary key;
@@ -53,7 +56,7 @@ def create_table(conn):
     conn.commit()
 
 
-def add_vacancies(vacancies: list, conn):
+def add_vacancies_lite(vacancies: list, conn):
     """
     Add vacancies into database table.
     :param vacancies: list of dictionaries with jobs info.
@@ -87,7 +90,7 @@ def add_vacancies(vacancies: list, conn):
     print("Insertion completed.")
 
 
-def get_vacancies(conn, full=False):
+def get_vacancies_lite(conn, full=False):
     """
     Retrieves list of jobs from db.
     :param conn: db connection object.
